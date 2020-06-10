@@ -3,6 +3,9 @@ import math
 
 SHOW_WORKING: bool = True
 
+class WrongNumberOfArgumentsError(Exception):
+    pass
+
 def gcd(a: int, b: int) -> int:
     if (a, b) == (0, 0):
         raise ValueError("Can't find gcd(0, 0)")
@@ -30,6 +33,29 @@ def gcd(a: int, b: int) -> int:
     if SHOW_WORKING: print(f"\tStopping condition hit (r2 = 0). Result of gcd({a}, {b}) is r1 = {r1}")
 
     return r1
+
+def setgcd(*ns: int) -> int:
+    """Calculates the greatest common divisor of all elements in the given list"""
+    if SHOW_WORKING: print(f"setgcd{ns}")
+
+    if len(ns) < 2:
+        raise WrongNumberOfArgumentsError("setgcd must supply two or more arguments")
+
+    if len(ns) == 2:
+        result = gcd(*ns)
+    else:
+        result: int = setgcd(gcd(*ns[:2]), *ns[2:])
+    if SHOW_WORKING: print(f"\tsetgcd{ns} = {result}")
+    return result
+
+def coprime(*ns: int) -> bool:
+    if SHOW_WORKING: print(f"coprime{ns}")
+    resultgcd = setgcd(*ns)
+    if SHOW_WORKING: print(f"coprime{ns} = {resultgcd == 1} because setgcd{ns} == {resultgcd} {'=' if resultgcd == 1 else '!'}= 1")
+    return resultgcd == 1
+
+def pairwise_coprime(*ns: int) -> bool:
+    return coprime(*ns)
 
 # TODO: Finish this
 def modinverse(a: int, m: int) -> int:
@@ -114,6 +140,8 @@ def modexp(x: int, b: int, p: int) -> int:
 def prime_factors(n: int) -> Dict[int, int]:
     """Returns a dictionary containing the prime factors of n as keys and their multiplicity as values
        e.g. prime_factors(18) -> {2: 1, 3: 2}"""
+    if SHOW_WORKING: print(f"prime_factors({n})")
+    original_n = n
     factors = {}
 
     while n % 2 == 0:
@@ -142,10 +170,70 @@ def prime_factors(n: int) -> Dict[int, int]:
                 n //= d
     if n > 1:
         factors[n] = 1
+
+    print(f"\t{original_n} has prime factorisation {' * '.join([str(p) + '^' + str(e) for p, e in factors.items()])}")
     return factors
 
 def totient(n: int) -> int:
     """Returns the number of primes less than n"""
-    pass
+    if SHOW_WORKING: print(f"totient({n})")
+    print(f"\ttotient(n) = p1^(e1 - 1) * (p1 - 1) * p2^(e2 - 1) * (p2 - 1) * ... * pk^(ek - 1) * (pk - 1)")
 
-print(prime_factors(1025))
+    result: int = 1
+    
+    working_str1: str = ''
+    working_str2: str = ''
+    working_str3: str = ''
+    working_str4: str = ''
+
+    n_prime_factors: Dict[int, int] = prime_factors(n)
+
+    for p, e in n_prime_factors.items():
+        result *= p ** (e - 1) * (p - 1)
+        working_str1 += f"{p}^({e} - 1) * ({p} - 1) * "
+        working_str2 += f"{p}^{e - 1} * {p - 1} * "
+        working_str3 += f"{p ** (e - 1)} * {p - 1} * "
+        working_str4 += f"{p ** (e - 1) * (p - 1)} * "
+    
+    working_str1 = working_str1[:-2]
+    working_str2 = working_str2[:-2]
+    working_str3 = working_str3[:-2]
+    working_str4 = working_str4[:-2]
+
+    n_prime_factorisation: str = ' * '.join([str(p) + '^' + str(e) for p, e in n_prime_factors.items()])
+
+    if SHOW_WORKING: print(f"\n\ttotient({n}) = totient({n_prime_factorisation}) \n\t\t= {working_str1} \n\t\t= {working_str2} \n\t\t= {working_str3} \n\t\t= {working_str4} \n\t\t= {result}")
+
+    return result
+
+def chinese_remainder(ms: List[int], _as: List[int]) -> int:
+    """Computes the unique solution to the r simultaneous congruences modulo the product of pairwise coprime ms
+       x = a[0] % M
+       x = a[1] % M
+        ...
+       x = a[r] % M"""
+
+    if SHOW_WORKING: print(f"chinese_remainder(ms, _as) = chinese_remainder({ms}, {_as})")
+
+    for m in ms:
+        if m <= 0:
+            raise ValueError("All ms must be positive integers")
+    
+    if not pairwise_coprime(*ms):
+        raise ValueError("ms must be pairwise coprime")
+
+    if len(ms) != len(_as):
+        raise ValueError("Must supply same number of _as as ms")
+
+    r: int = len(ms)
+
+    summands = []
+    if SHOW_WORKING:
+        print(f"\tFinding a solution to the following {r} congruences:")
+        for i in range(r):
+            print(f"\t\tx ≡ {_as[i]}\t(mod {ms[i]})")
+            
+
+        
+    
+chinese_remainder([1, 2, 3], [4, 5, 6])

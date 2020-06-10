@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage{amsmath,amsthm,amssymb, needspace, enumerate, listings, mathtools}
+
+\newcounter{qcounter}
+\newcommand{\showqcounter}{\theqcounter}
+\newcommand{\question}{\vspace{5mm}\addtocounter{qcounter}{1}\vspace{5mm}{\bf Q\showqcounter: }}
+\newcommand{\answer}{\vspace{5mm}{\bf A\showqcounter: }}
+
+\setlength\parindent{0pt}
+
+\begin{document}
+\question Define Euler's Totient Function of a positive integer $n$ with words.
+
+\answer The number of non-negative integers less than $n$ which are coprime to $n$.
+
+
+\question Precicely describe how to calculate Euler's Totient Function of a positive integer $n$.
+
+\answer First find the prime factorisation of $n$, call it 
+$n = {p_1}^{e_1} \cdot {p_2}^{e_2} \cdots {p_k}^{e_k}$. Next calculate the following to find $\phi(n)$:
+$$
+    \prod_{i = 1}^k \left( {p_i}^{e_i - 1} \cdot (p_i - 1) \right)
+$$
+
+\question State Euler's Theorem.
+
+\answer If $\gcd(a, n) = 1$, then $a^{\phi(n)} \equiv 1 \pmod n$.
+
+
+\question State Fermat's Little Theorem.
+
+\answer If $a$ is a positive integer and $p$ is prime, then $a^p \equiv 1 \pmod{p}$.
+
+
+\question What does it mean for a sett of integers to be pairwise coprime?
+
+\answer The greatest common divisor of all the elements is $1$.
+
+
+\question State the Chinese Remainder Theorem.
+
+\answer if $m_1, m_2, \cdots, m_r$ are pairwise coprime positive integers and $a_1, a_2, \cdots, a_r$ are integers, 
+then the system of congruences 
+\begin{align*}
+x \equiv& a_1 \pmod{m_1} \\
+x \equiv& a_2 \pmod{m_2} \\
+  \vdots&\\
+x \equiv& a_r \pmod{m_r}
+\end{align*}
+has a unique solution modulo $M := m1 \cdot m_2 \cdots m_r$ which is given by
+$$
+    x = \sum_{i=1}^r a_i M_i y_i \pmod{M}
+$$
+where $M_i := M / m_i$ and $y_i :\equiv M_i^{-1} \pmod{m_i}$ for $1 \leq i \leq r$. 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+\end{document}
