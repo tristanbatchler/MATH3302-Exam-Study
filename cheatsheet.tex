@@ -54,30 +54,81 @@ $$
 where $M_i := M / m_i$ and $y_i :\equiv M_i^{-1} \pmod{m_i}$ for $1 \leq i \leq r$. 
 
 
-\question 
+\question What is Kerckhoff's Assumption?
 
-\answer 
-
-
-\question 
-
-\answer 
+\answer Everything about a cryptographic system is public knowledge except for the key. In other words, the enemy knows the system.
 
 
-\question 
+\question Briefly explain the four levels of attacks on a cryptosystem, in ascending order of strength.
 
-\answer 
+\answer \begin{enumerate}
+  \item {\bf Ciphertext only:} Opponent has access to some ciphertext and might use statistical information to determine the corresponding plaintext.
+  \item {\bf Known plaintext:} Opponent knows some plaintext-ciphertext pairs and uses it to gain more knowledge of the key.
+  \item {\bf Chosen plaintext:} Opponent is temporarily able to encrypt to build a collection of known plaintext-ciphertext pairs. 
+  \item {\bf Chosen plaintext-ciphertext:} Opponent is temporarily able to encrypt and decrypt.
+\end{enumerate}
 
 
-\question 
+\question What is the plaintext and ciphertext space of a shift cipher?
 
-\answer 
+\answer Both are the non-negative integers less than $26$.
 
 
-\question 
+\question Is a shift cipher a public or private system? What is/are the key(s)?
 
-\answer 
+\answer Private. Key is the shift amount.
 
+
+\question How do you encrypt a plaintext message with a shift cipher?
+
+\answer Add the private key to the message modulo $26$. In other words, rotate the letter by the key amount.
+
+
+\question How do you decrypt a ciphertext message encrypted with a shift cipher?
+
+\answer Subtract the private key from the message modulo $26$. In other words, rotate the letter backwards by the key amount.
+
+
+\question What are the best attacks for a shift cipher?
+
+\answer Brute force (try every key) or analyse letter frequencies to determine the key.
+
+
+\question What is the plaintext and ciphertext space for an affine cipher?
+
+\answer Both are non-negative integers less than $26$.
+
+
+\question Is an affine cipher a public or private system? What is/are the key(s)?
+
+\answer Private. The key is a pair of non-negative integers less than $26$ where one of them is coprime to $26$.
+
+
+\question How do you encrypt a plaintext message with an affine cipher?
+
+\answer Suppose the key is $(a, b)$ where $a$ is coprime with $26$ and the message is $x$. To encrypt the message, calculate:
+  $$
+    y \equiv ax + b \pmod{26}
+  $$
+
+
+\question How do you decrypt a ciphertext message encrypted with an affine cipher?
+
+\answer Suppose the key is $(a, b)$ where $a$ is coprime with $26$ and the encrypted message is $y$. The decrypt the message, calculate: 
+  $$
+    x \equiv a^{-1}(y - b) \pmod{26}
+  $$
+
+\question What are the best attacks for an affine cipher?
+
+\answer Obtain two plaintext-ciphertext pairs and solve the resulting linear congruences for the key. Could also brute force.
+  In otherwords, given $x_1, y_1, x_2, y_2$, solve the following for $a$ and $b$.
+  \begin{align*}
+    y_1 &\equiv ax_1 + b \pmod{26}\\
+    y_2 &\equiv ax_2 + b \pmod{26}
+  \end{align*}
+
+  You can also just try all combinations of $a$ and $b$.
 
 \question 
 

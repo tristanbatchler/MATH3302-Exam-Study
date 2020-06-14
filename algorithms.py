@@ -1,5 +1,7 @@
 from typing import *
 import math
+import sympy.simplify
+import sympy.core.numbers
 
 SHOW_WORKING: bool = True
 
@@ -60,9 +62,12 @@ def pairwise_coprime(*ns: int) -> bool:
 # TODO: Finish this
 def modinverse(a: int, m: int) -> int:
     """Runs the extended Eulidean algorithm to find the inverse of a modulo m"""
-    if a <= 0 or m <= 0:
-        raise ValueError("a and m must be positive")
-    
+    if SHOW_WORKING: print(f"modinverse(a, m) = modinverse({a}, {m})")
+    if SHOW_WORKING: print(f"\tWe want to find some x & y such that {a} * x + {m} * y = 1")
+
+    if a < 0 or m <= 0:
+        raise ValueError("a must be non-negative and m must be positive")
+
     if SHOW_WORKING: print(f"Find gcd(a, b) = gcd({a}, {m})")
     if m > a:
         if SHOW_WORKING: print(f"\tb > a. Set r1[0] := m = {m} and r2[0] := a = {a} so that r1[0] > r2[0")
@@ -95,19 +100,67 @@ def modinverse(a: int, m: int) -> int:
 
     if SHOW_WORKING: print(f"\n\tBegin working backwards:")
 
-    i -= 1
-    r2siminus1strgeneral = f"(r2[{i - 1}])"
-    r2siminus1strexact = f"({r2s[i - 1]})"
-    while i >= 0:
-        if SHOW_WORKING: print(f"r2[{i}] = r1[{i - 1}] - r2[{i - 1}] * q[{i - 1}] = {r1s[i - 1]} - {r2s[i - 1]} * {qs[i - 1]} = {r2s[i]}")
-        if SHOW_WORKING: print(f"r2[{i}] = r1[{i - 1}] - {r2siminus1strgeneral} * q[{i - 1}] = {r1s[i - 1]} - {r2siminus1strexact} * {qs[i - 1]} = {r2s[i]}")
-        if SHOW_WORKING: print(" -")
+    def getnestedexpressionstr(leftstr: str, nestedr1r2q: List[Union[int, List[int]]], rightstr: str) -> str:
+        if SHOW_WORKING: print(f"\t\tgetnestedexpressionstr('{leftstr}', {nestedr1r2q}, '{rightstr}')")
+        r1: int = nestedr1r2q[0]
+        r2: Union[int, List[int]] = nestedr1r2q[1]
+        q: int = nestedr1r2q[2]
+        if SHOW_WORKING: print(f"\t\t\tr1 = {r1}, r2 = {r2}, q = {q}")
 
-        r2siminus1strgeneral = f"(r1[{i - 1}] - {r2siminus1strgeneral} * q[{i - 1}])"
-        r2siminus1strexact = f"({r1s[i - 1]} - {r2siminus1strexact} * {qs[i - 1]})"
+        if isinstance(r2, int):
+            return f"{leftstr}{r1} - {r2} * {q}{rightstr}"
+        
+        if leftstr == rightstr == '':
+            return getnestedexpressionstr(f"{r1} - (", r2, f") * {q}")
 
-        i -= 1
+        return getnestedexpressionstr(f"{leftstr}{r1} - (", r2, f") * {q}{rightstr}")
 
+    def backtrack(index: int, nestedr1r2q: List[Union[int, List[int]]]) -> List[Union[int, List[int]]]:
+        """Provided an index and an ordered list representing the r1, r2, and q values of the equation
+           r1 - r2 * q, this function returns another list where r2 has been broken down to the parts of 
+           its equation on the previous indexed equation, e.g. if the 3rd and 4th equations from the GCD 
+           algorithm are:
+               (3): r1 - r2 * q2 = 4 - 4 * 1
+               (4): r1 - r2 * q2 = 3 - 1 * 3
+           then: 
+               backtrack(4, [3, 1, 3]) -> [3, [4, 3, 1], 3].
+           
+           This also works when the middle element of the list (the r2 element) is given as a list of parts,
+           e.g., if we follow the previous example where additionally equation 2 is:
+               (2): r1 - r2 * q2 = 11 - 4 * 2
+           then:
+               backtrack(3, [3, [4, 3, 1], 3]) -> [3, [4, [11, 4, 2], 1], 3]."""
+           
+        if SHOW_WORKING: print(f"\t\tbacktrack({index}, {nestedr1r2q})")
+
+        if index <= 0:
+            raise ValueError("Can't backtrack from here, please supply a positive index")
+        
+        r1: int = nestedr1r2q[0]
+        r2: Union[int, List[int]] = nestedr1r2q[1]
+        q: int = nestedr1r2q[2]
+
+        if index == 1:
+            return [r1, [r1s[0], r2s[0], qs[0]], q]
+
+        return [r1, backtrack(index - 1, [r1s[index - 1], r2s[index - 1], qs[index - 1]]), q]
+
+    if i - 2 > 0:
+        expression = backtrack(i - 2, [r1s[i - 2], r2s[i - 2], qs[i - 2]])
+
+        nestedexpressionstr: str = getnestedexpressionstr('', expression, '')
+        nestedexpressionstr = nestedexpressionstr.replace(str(a), 'a').replace(str(m), 'm')
+
+        if SHOW_WORKING: print(f"\t\t{nestedexpressionstr}")
+        if SHOW_WORKING: print(f"\t\t{sympy.simplify(nestedexpressionstr)}")
+
+    x, y = sympy.core.numbers.igcdex(a, m)[:2]
+    if SHOW_WORKING: print(f"\ta * x + m * y = 1 -> {a} * {x} + {m} * {y} = 1")
+
+    if SHOW_WORKING: print(f"\tmodinverse({a}, {m}) = {x}\t(mod {m}) = {x % m}")
+    
+    return x % m
+    
 def modexp(x: int, b: int, p: int) -> int:
     """Calculates x^b modulo p with the fast exponentiation algorithm"""
     if p <= 0:
@@ -227,13 +280,37 @@ def chinese_remainder(ms: List[int], _as: List[int]) -> int:
 
     r: int = len(ms)
 
-    summands = []
     if SHOW_WORKING:
         print(f"\tFinding a solution to the following {r} congruences:")
         for i in range(r):
             print(f"\t\tx ≡ {_as[i]}\t(mod {ms[i]})")
+    
+    M = 1
+    for i in range(r):
+        M *= ms[i]
+    
+    if SHOW_WORKING: print(f"\tLet M = m1 * ... * m{r} = {ms[0]} * ... * {ms[r - 1]} = {M}")
+
+    Mis = []
+    yis = []
+    if SHOW_WORKING: print(f"\tWe must find each Mi = M / mi and yi = modinverse(Mi, mi)")
+    for i in range(r):
+        Mis.append(int(M / ms[i]))
+        if SHOW_WORKING: print(f"\t\tM{i} = M / m{i} = {M} / {ms[i]} = {Mis[i]}")
+
+        if SHOW_WORKING: print(f"\t\ty{i} = modinverse(M{i}, m{i}) = modinverse({Mis[i]}, {ms[i]}) = modinverse({Mis[i] % ms[i]}, {ms[i]})")
+        yis.append(modinverse(Mis[i] % ms[i], ms[i]))
+
+    if SHOW_WORKING: print(f"\tSo Mis = {Mis} and yis = {yis}")
+    if SHOW_WORKING: print(f"\tCRT -> x ≡ a1 * M1 * y1 + ... + ar * Mr * yr)\t(mod M)")
+    _sum: int = 0
+    for i in range(r):
+        _sum += _as[i] * Mis[i] * yis[i]
+
+    print(f"\tThis is x ≡ {_sum} % {M} = {_sum % M}")
+    return _sum % M
             
 
         
     
-chinese_remainder([1, 2, 3], [4, 5, 6])
+chinese_remainder([3, 5, 7], [1, 2, 3])
