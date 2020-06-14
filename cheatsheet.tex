@@ -114,7 +114,7 @@ where $M_i := M / m_i$ and $y_i :\equiv M_i^{-1} \pmod{m_i}$ for $1 \leq i \leq 
 
 \question How do you decrypt a ciphertext message encrypted with an affine cipher?
 
-\answer Suppose the key is $(a, b)$ where $a$ is coprime with $26$ and the encrypted message is $y$. The decrypt the message, calculate: 
+\answer Suppose the key is $(a, b)$ where $a$ is coprime with $26$ and the encrypted message is $y$. To decrypt the message, calculate: 
   $$
     x \equiv a^{-1}(y - b) \pmod{26}
   $$
@@ -130,10 +130,171 @@ where $M_i := M / m_i$ and $y_i :\equiv M_i^{-1} \pmod{m_i}$ for $1 \leq i \leq 
 
   You can also just try all combinations of $a$ and $b$.
 
-\question 
+\question What is the plaintext and ciphertext space for a mixed alphabet cipher?
+
+\answer Both are non-negative integers less than $26$.
+
+
+\question Is a mixed alphabet cipher a public or private system? What is/are the key(s)?
+
+\answer Private. The key is a permutation of the set of non-negative integers less than $26$.
+
+
+\question How do you encrypt a plaintext message with a mixed alphabet cipher?
+
+\answer Suppose the key is a permutation of the set of non-negative integers less than $26$, $\pi$ and the message is $x$.
+  To encrypt the message, calculate:
+  $$
+    y = \pi(x).
+  $$
+
+
+\question How do you decrypt a ciphertext message encrypted with a mixed alphabet cipher?
+
+\answer Suppose the key is a permutation of the set of non-negative integers less than $26$, $\pi$ and the encrypted message is $y$.
+To decrypt the message, calculate:
+$$
+  x = \pi^{-1}(y).
+$$
+
+
+\question What are the best attacks for a mixed alphabet cipher?
+
+\answer Use statistical analysis on the known language's letter frequencies. Can also search for common digrams and trigrams 
+  in the ciphertext which will correspond to things like ``th'', ``he'', ``in'', or ``the'', ``ing'', ``and'', etc. 
+  Piece together the key bit by bit.
+
+
+\question What is the plaintext and ciphertext space for a Vigen\`ere cipher?
+
+\answer Both are strings of non-negative integers less than $26$.
+
+
+\question Is a Vigen\`ere cipher a public or private system? What is/are the key(s)?
+
+\answer Private. The key is a string of non-negative integers less than $26$.
+
+
+\question How do you encrypt a plaintext message with a Vigen\`ere cipher?
+
+\answer Suppose the key is a string of $m$ non-negative integers less than $26$, $k_1, k_2, \cdots k_m$.
+  Further suppose the message is a string of $m$ non-negative integers less than $26$, $x_1, x_2, \cdots x_m$.
+  To encrypt the message, calculate:
+  \begin{align*}
+    y_1 \equiv& x_1 + k_1 \pmod{26}\\
+    y_2 \equiv& x_2 + k_2 \pmod{26}\\
+              &\vdots\\
+    y_m \equiv& x_m + k_m \pmod{26}
+  \end{align*}
+
+  In other words, treat each element of the key and message as its own shift cipher and encrypt it accordingly.
+
+
+\question How do you decrypt a ciphertext message encrypted with a Vigen\`ere cipher?
+
+\answer Suppose the key is a string of $m$ non-negative integers less than $26$, $k_1, k_2, \cdots k_m$.
+  Further suppose the encrypted message is a string of $m$ non-negative integers less than $26$, $y_1, y_2, \cdots y_m$.
+  To encrypt the message, calculate:
+  \begin{align*}
+    x_1 \equiv& y_1 - k_1 \pmod{26}\\
+    x_2 \equiv& y_2 - k_2 \pmod{26}\\
+              &\vdots\\
+    x_m \equiv& y_m - k_m \pmod{26}
+  \end{align*}
+
+  In other words, treat each element of the key and encrypted message as its own shift cipher and decrypt it accordingly.
+
+\question What are the best attacks for a Vigen\`ere cipher?
+
+\answer Determine the key length, $m$, and break $m$ shift ciphers independently using frequency analysis.
+
+\question Name and explain one method to determine the key length of a Vigen\`ere cipher.
+
+\answer Kasiski's test. Find repeated trigrams in the ciphertext. If the key length is less than the number of occurrences of 
+  a trigram, then its corresponding plaintext must have been encrypted with the same shift more than once (by the Pigeonhole Principle).
+
+  We can then extract a common factor from the distances between the starting index of each repeated trigram to estimate the key length.
+
+
+\question What is the index of coincidence of a language? How is it denoted?
+
+\answer The probability of drawing two matching letters through random selection from a text in the given language.
+  It is denoted with the greek letter $\varphi$ (phi).
+
+
+\question How do you calculate the index of coincidence for a language with $n$ letters where the $i$th letter has 
+  probability of occurring $p_i$?
 
 \answer 
+  $$
+    \sum_{i=1}^n p_i^2
+  $$
 
+
+\question What is the index of coincidence approximately equal to for English?
+
+\answer $0.0667$.
+
+
+\question What is the index of coincidence equal to for a random language?
+
+\answer $1 / 26 \approx 0.0384$.
+
+
+\question Name and explain one method to determine the key length of a Vigen\`ere cipher.
+
+\answer Friedman's first method. Suppose your guess for the key length is $m$. Extract every $m$th letter from the ciphertext 
+  and calculate the index of coincidence of the extracted text. 
+  If it's close to the index of coincidence for English, it's probably the correct key length.
+
+
+\question Name and explain one method to determine the key length of a Vigen\`ere cipher.
+
+\answer Friedman's second method. Calculate the index of coincidence for the entire ciphertext ($\varphi_T$) and use the measure 
+  of how ``flat'' is it compared with English ($\varphi_L$) and random text ($\varphi_0$) to estimate the key length.
+  $$
+    m \approx \frac{\varphi_L - \varphi_0}{\varphi_T - \varphi_0}
+  $$
+
+
+\question What is the plaintext and ciphertext space for a Hill cipher?
+
+\answer Strings of non-negative integers less than $26$.
+
+
+\question Is a Hill cipher a public or private system? What is/are the key(s)?
+
+\answer Private. The key is a invertible matrix of non-negative integers less than $26$.
+
+
+\question How do you encrypt a plaintext message with a Hill cipher?
+
+\answer Suppose the key is an invertible $m \times m$ matrix $K$ and $x$ is a message of length $m$. 
+  To encrypt the message, calculate:
+  $$
+    y \equiv K x \pmod{26}
+  $$
+
+
+\question How do you decrypt a ciphertext message encrypted with a Hill cipher?
+
+\answer Suppose the key is an invertible $m \times m$ matrix $K$ and $y$ is an encrypted message of length $m$. 
+To decrypt the message, calculate:
+$$
+  x \equiv K^{-1} y \pmod{26}
+$$
+
+
+\question What are the best attacks for a Hill cipher?
+
+\answer Obtain $m$ plaintext-ciphertext pairs each of length $m$.
+  Solve the resulting linear congruences for $K$:
+  \begin{align*}
+    y_1 \equiv& K x_1 \pmod{26}\\
+    y_2 \equiv& K x_2 \pmod{26}\\
+              & \vdots\\
+    y_m \equiv& K x_m \pmod{26}
+  \end{align*}
 
 \question 
 
