@@ -2,6 +2,7 @@ from typing import *
 import algorithms
 import random
 from collections import Counter
+from Crypto.Util.number import getPrime
 
 SHOW_WORKING = True
 
@@ -40,3 +41,66 @@ def affine_decrypt(a: int, b: int, *ys: int):
     
     if SHOW_WORKING: print(f"\txs = {tuple(xs)}")
     return tuple(xs)
+
+def rsa_encrypt(n: int, b: int, *xs: int) -> Tuple[int]:
+    """Encrypts a message of one or more plaintext x's in Z_{n} 
+       using the given RSA public key (n, b) where n is the product 
+       of two primes and b is a positive invertible integer less than 
+       totient(n).
+
+       y ≡ x^b    (mod n)"""
+    if SHOW_WORKING: print(f"rsa_encrypt(n, b, xs) = rsa_encrypt({n}, {b}, {xs})")
+
+    ys = []
+    for x in xs:
+        if SHOW_WORKING: print(f"\ty ≡ x^b ≡ {x}^{b} (mod {n})")
+        ys.append(algorithms.modexp(x, b, n))
+    
+    if SHOW_WORKING: print(f"\tys = {tuple(ys)}")
+    return tuple(ys)
+
+def rsa_decrypt(a: int, p: int, q: int, *ys: int) -> Tuple[int]:
+    """Decrypts a message of one or more ciphertext y's in Z_{p*q} 
+        using the given RSA private key (a, p, q) where a is the inverse 
+        of b from the public key modulo p * q =: n.
+        
+        x ≡ y ^ a   (mod p * q)"""
+
+    if SHOW_WORKING: print(f"rsa_decrypt(a, p, q, ys) = rsa_decrypt({a}, {p}, {q}, {ys})")
+
+    n: int = p * q
+    if SHOW_WORKING: print(f"\tCalculated n := p * q = {p} * {q} = {n}.")
+    xs = []
+    for y in ys:
+        if SHOW_WORKING: print(f"\tx ≡ y^a ≡ {y}^{a} (mod {n})")
+        xs.append(algorithms.modexp(y, a, n))
+    
+    if SHOW_WORKING: print(f"\txs = {tuple(xs)}")
+    return tuple(xs)
+
+p = getPrime(8)
+q = getPrime(8)
+n = p * q
+t = (p - 1) * (q - 1)
+b = random.randint(1, t - 1)
+while algorithms.gcd(b, t) != 1:
+    b = random.randint(1, t - 1)
+a = algorithms.modinverse(b, t)
+
+xs = tuple([random.randint(0, n - 1) for i in range(8)])
+
+print(f"Public key (n, b) = ({n}, {b})")
+print(f"Private key (a, p, q) = ({a}, {p}, {q})")
+print(f"Message xs = {xs}")
+
+ys = rsa_encrypt(n, b, *xs)
+
+print(f"Encrypted message ys = {ys}")
+
+xsback = rsa_decrypt(a, p, q, *ys)
+
+print(f"Decrypted back again xs = {xsback}")
+
+print(f"[(n, b) = ({n}, {b}), (a, p, q) = ({a}, {p}, {q})]:\t{xs} -> {ys} -> {xsback}")
+
+assert xs == xsback

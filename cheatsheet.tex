@@ -296,6 +296,158 @@ $$
     y_m \equiv& K x_m \pmod{26}
   \end{align*}
 
+
+\question How can we easily calculate Euler's Totient function of $n$ where $n$ is the product of two primes? In other words, 
+how can we arrive at a simple expression for $\phi(p q)$?.
+
+\answer We note that the prime factorisation of $n$ is $p^1 q^1$ so:
+$$
+  \phi(n) = \left[p^{1 - 1} (p - 1)\right] \cdot \left[q^{1 - 1} (q - 1)\right] = (p - 1) (q - 1)
+$$
+
+
+\question What is the plaintext and ciphertext space for RSA?
+
+\answer Both are non-negative integers less than the product of two primes.
+
+
+\question Is RSA a public or private system? What is/are the key(s)?
+
+\answer Public. 
+  \begin{itemize}
+    \item The {\bf public} key is $(n, b)$ where $n$ is the product of two {\bf distinct} large primes $p$ and $q$ and 
+      $b$ is a randomly chosen positive integer less than $\phi(n)$ ($\phi$ is Euler's Totient function) which is 
+      invertible modulo $\phi(n)$.
+    \item The {\bf private} key is $(a, p, q)$ where $a$ is $b^{-1} \pmod{\phi(n)}$ and $p$ and $q$ are 
+      the primes whose product makes $n$.
+  \end{itemize}
+
+
+\question How do you encrypt a plaintext message with RSA?
+
+\answer Suppose our public key is $(n, b)$ and the message is $x$. To encrypt the message, calculate:
+  $$
+    y \equiv x^b \pmod{n}.
+  $$
+
+
+\question How do you decrypt a plaintext message with RSA?
+
+\answer Suppose our private key is $(a, p, q)$ so $n = p q$ and our encrypted message is $y$. To decrypt the message, caclulate:
+  $$
+    x \equiv y^a \pmod{n}.
+  $$
+
+
+\question What are the best attacks for RSA?
+
+\answer 
+  \begin{itemize}
+    \item If our private key has one prime much smaller than the other, we can easily factorise $n$.
+    \item If our private key has primes roughly the same size, we can also easily factorise $n$.
+    \item If the message to encrypt, $x$, is so small that $y := x^b \pmod{n}$ is less than $n$, then you can simply take the $b$th root 
+      of $y$ over the reals to get back $x$.
+    \item If the message to encrypt is predictable, simply try encrypting guesses and see if the resulting ciphertext matches.
+    \item If the public exponent, $b$ is so small that the same plaintext message is likely to be encrypted with $b$ or more different keys, 
+      you can recover the plaintext using the Chinese Remainder Theorem.
+  \end{itemize}
+
+
+\question Why is it important to sign and verify signatures of messages encrypted with public key cryptography?
+
+\answer Because the public key of every sender is known, anybody can use the public key to encrypt any message and send to anybody. 
+  You need some claim of authenticity in the messages you send and receive.
+
+
+\question How can a sender sign their RSA-encrypted message?
+
+\answer Attach a signature to their encrypted message, which is a hashed plaintext encrypted with their private key rather than the public one.
+  In other words, if the hashed message is $f(x)$ and the private exponent is $a$, the attaches the following signature to the ciphertext:
+  $$
+    s \equiv \left(f(x)\right)^a \pmod{n}
+  $$
+
+
+\question How can a receiver verify the signature of an RSA-encrypted message?
+
+\answer Decrypt the signature, $s$, with the intended sender's public exponent, $b$, and see if it results in the hashed decrypted message $f(x)$.
+  In other words, verify the following holds:
+  $$
+    s^b \equiv f(x) \pmod{n}
+  $$
+
+
+\question How could a malicious sender send an encrypted message with RSA claiming to be somebody they're not.
+
+\answer They obtain the public intended encrypted message and the signature and look for a collision in the hash function. 
+  They can then send their malicious encrypted message along with the original sender's signature and nobody will be able to 
+  detect foul play.
+
+
+\question What is the plaintext and ciphertext space for ElGamal?
+
+\answer Both are non-negative integers less than some large prime.
+
+
+\question Is ElGamal a public or private system? What is/are the key(s)?
+
+\answer Public. 
+  \begin{itemize}
+    \item The {\bf public} key is 
+    \item The {\bf private} key is 
+  \end{itemize}
+
+\question How do you encrypt a plaintext message with ElGamal?
+
+\answer ... To encrypt the message, caclulate:
+$$
+blah
+$$
+
+
+\question How do you decrypt a plaintext message with ElGamal?
+
+\answer ... To decrypt the message, caclulate:
+$$
+blah
+$$
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
+\question 
+
+\answer 
+
+
 \question 
 
 \answer 

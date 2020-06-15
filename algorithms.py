@@ -2,6 +2,7 @@ from typing import *
 import math
 import sympy.simplify
 import sympy.core.numbers
+from Crypto.Util.number import isPrime
 
 SHOW_WORKING: bool = True
 
@@ -166,7 +167,7 @@ def modexp(x: int, b: int, p: int) -> int:
     if p <= 0:
         raise ValueError("p must be greater than zero")
 
-    if SHOW_WORKING: print(f"Find modexp(x, b, p) = gcd({x}, {b}, {p})")
+    if SHOW_WORKING: print(f"Find modexp(x, b, p) = modexp({x}, {b}, {p})")
 
     if SHOW_WORKING: print("\tSet y := 1")
     y: int = 1
@@ -309,8 +310,3 @@ def chinese_remainder(ms: List[int], _as: List[int]) -> int:
 
     print(f"\tThis is x ≡ {_sum} % {M} = {_sum % M}")
     return _sum % M
-            
-
-        
-    
-chinese_remainder([3, 5, 7], [1, 2, 3])
