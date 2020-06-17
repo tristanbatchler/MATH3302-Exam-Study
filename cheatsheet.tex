@@ -47,7 +47,7 @@ x \equiv& a_2 \pmod{m_2} \\
   \vdots&\\
 x \equiv& a_r \pmod{m_r}
 \end{align*}
-has a unique solution modulo $M := m1 \cdot m_2 \cdots m_r$ which is given by
+has a unique solution modulo $M := m_1 \cdot m_2 \cdots m_r$ which is given by
 $$
     x = \sum_{i=1}^r a_i M_i y_i \pmod{M}
 $$
@@ -331,7 +331,7 @@ $$
   $$
 
 
-\question How do you decrypt a plaintext message with RSA?
+\question How do you decrypt a ciphertext message with RSA?
 
 \answer Suppose our private key is $(a, p, q)$ so $n = p q$ and our encrypted message is $y$. To decrypt the message, caclulate:
   $$
@@ -393,77 +393,243 @@ $$
 
 \answer Public. 
   \begin{itemize}
-    \item The {\bf public} key is 
-    \item The {\bf private} key is 
+    \item The {\bf public} key is a set of three integers, $(p, \alpha, \beta)$ where:
+      \begin{itemize}
+        \item $p$ is a large prime,
+        \item $\alpha$ is a positive integer less than $p$, which, when repeatedly squared, 
+          covers the entire set of positive integers less than $p$,
+        \item $\beta \equiv \alpha^a \pmod{p}$ where $a$ is a random integer between $2$ and $p - 2$.
+      \end{itemize}
+    \item The {\bf private} key is $a$ which is the random integer between $2$ and $p - 2$ from the 
+      definition of $\beta$ in the public key.
   \end{itemize}
 
 \question How do you encrypt a plaintext message with ElGamal?
 
-\answer ... To encrypt the message, caclulate:
-$$
-blah
-$$
+\answer Suppose our public key is $p, \alpha, \beta$ and the message to send is $x$. 
+  To encrypt the message, choose a random integer $d$ between $2$ and $p - 2$ and caclulate:
+  $$
+    (c_1, c_2) \equiv \left(\alpha^d,\, \beta^d x \right) \pmod{p}
+  $$
 
 
-\question How do you decrypt a plaintext message with ElGamal?
+\question How do you decrypt a ciphertext message with ElGamal?
 
-\answer ... To decrypt the message, caclulate:
-$$
-blah
-$$
-
-
-\question 
-
-\answer 
+\answer Suppose our private key is $a$ and the encrypted message is $(c_1, c_2)$. To decrypt the message, caclulate:
+  $$
+    x \equiv (c_1^a)^{-1}c_2 \pmod{p}
+  $$
 
 
-\question 
+\question What are the best attacks for ElGamal?
 
-\answer 
+\answer If we obtain one plaintext-ciphertext pair and another ciphertext which was encrypted using the same random exponent 
+  $d$, we can recover the plaintext corresponding to the second ciphertext. \\
+  
+  Suppose we know $x_1$ encrypts to $(y_1, y_2)$ and we wish to find the value of some $x_2$ that maps to $(c_1, c_2)$. \\
+  
+  We first note the value of $\beta^d$ as follows:
+  \begin{align*}
+    \beta^d \equiv y_2 x_1^{-1} \pmod{p}
+  \end{align*}
+
+  Next we use this expression to calculate the value of $x_2$ as follows:
+  \begin{align*}
+    x_2 &\equiv \left(\beta^d\right)^{-1} c_2 \pmod{p}\\
+        &\equiv \left( y_2 x_1^{-1} \right)^{-1} c_2 \pmod{p}\\
+        &\equiv y_2^{-1} x_1 c_2 \pmod{p}
+  \end{align*}
 
 
-\question 
-
-\answer 
-
-
-\question 
-
-\answer 
-
-
-\question 
-
-\answer 
-
-
-\question 
+\question Explain how a man-in-the-middle attack works where the sender, opponent, and receiver are named Alice, Eve, and Bob respectively.
 
 \answer 
+  \begin{itemize}
+    \item Alice wants to encrypt a message and send it to Bob.
+    \item Eve can listen to Alice's requests to the public key directory and inject her own communicatios to Alice and Bob.
+    \item Alice requests Bob's public key from the directory.
+    \item Eve silently sends Alice {\emph her} public key instead of Bob's.
+    \item Alice encrypts her message with Eve's public key instead of Bob's and sends it through Eve with intent of arriving to Bob.
+    \item Eve decrypts the message with her private key and reads it.
+    \item Eve then re-encrypts the message with Bob's public key and sends it to Bob.
+    \item Neither Alice nor Bob know Eve has read the message.
+  \end{itemize}
 
 
-\question 
+\question What does PKI stand for and what does it aim to achieve?
+
+\answer Public Key Infrastructure. It provides a means of trusting the authenticity of senders and receivers of publicly encrypted messages.
+
+
+\question What is one method of certification in PKI? Roughly how does it work?
+
+\answer Certificate Authorities. A publicly trusted certificate authority (CA) signs and publishes people's public keys verifying they are 
+  who they say they are. If you trust the CA, you can trust a public key belongs to somebody if it's been signed by that CA.
+
+
+\question What is one method of certification in PKI? Roughly how does it work?
+
+\answer Web of Trust. There is no centralised certificate authority, but instead, end users are all encouraged to meet each other and personally 
+  verify each other's identity and sign their public keys in person.
+
+
+\question What is the difference between a synchronous and asynchronous stream cipher?
 
 \answer 
+  \begin{itemize}
+    \item {\bf Synchronous:} The keystream is independent of the plaintext.
+    \item {\bf Asynchronous:} The keystream uses the plaintext to generate the element of the stream.
+  \end{itemize}
+
+  
+\question What does it mean for a stream cipher to be periodic with period $d$?
+
+\answer The keystream repeats itself after $d$ elements.
 
 
-\question 
+\question What is the plaintext and ciphertext space for the Autokey cipher?
 
-\answer 
-
-
-\question 
-
-\answer 
+\answer Both are non-negative integers less than 26.
 
 
-\question 
+\question Is the Autokey cipher a public or private system? What is/are the key(s)?
 
-\answer 
+\answer Private. The key is a non-negative integer less than 26 is called the ``seed'' and the rest of the keystream continues to take on 
+  the values from the plaintext message but does not include the last element of the plaintext message.
 
 
-\question 
+\question How do you encrypt a plaintext message with the Autokey cipher?
 
-\answer 
+\answer Add the key stream to the message modulo $26$. In other words, add the seed to the first letter of the message and then 
+  add the first letter of the message to the next letter of the message and so on until you add the second last letter of the message 
+  to the last letter of the message
+
+
+\question How do you decrypt a plaintext message with the Autokey cipher?
+
+\answer Subtract the key stream from the message modulo $26$.
+
+
+\question Is the Autokey cipher synchronous or asynchronous?
+
+\answer Synchronous.
+
+
+\question Is the Autokey cipher periodic? If so, what is the period?
+
+\answer It's non-periodic.
+
+
+\question What are the best attacks for the Autokey cipher?
+
+\answer There are only 26 initial seeds. Just try them all and look for something that looks like English when you decrypt using that seed.
+
+
+\question What does it mean for a linear feedback shift register to be $m$-stage?
+
+\answer The seed must include a pair of bitstrings of length $m$ where the neither is ending with a $0$.
+
+
+\question What is the plaintext and ciphertext space for a linear feedback shift register?
+
+\answer Both are binary digits (bits).
+
+
+\question Is an $m$-stage linear feedback shift register a public or private system? What is/are the key(s)?
+
+\answer Private. The key is a pair of strings of $m$ bits which is called the ``seed''. The next element of the keystream is a linear 
+  combination of the previous $m$ bits of the keystream. For example, if the seed consists of the following two bit strings:
+  \begin{align*}
+    l_1, l_2, \cdots, l_m \\
+    c_0, c_1, \cdots, c_{m-1}
+  \end{align*}
+
+  then the $(m + i)$th element of the keystream is given by:
+  $$
+    l_{m + i} = c_0 l_{i} + c_1 l_{i + 1} + \cdots + c_{m - 1} l_{i + m - 1}
+  $$
+
+
+\question How do you encrypt a plaintext message with a linear feedback shift register?
+
+\answer Add the keystream to the message.
+
+
+\question How do you decrypt a plaintext message with a linear feedback shift register?
+
+\answer Subtract the keystream from the message.
+
+
+\question Is a linear feedback shift register synchronous or asynchronous?
+
+\answer Synchronous.
+
+
+\question Is an $m$-stage linear feedback shift register periodic? If so, what is the period?
+
+\answer Yes. A good choice of starting seed can give a period of $2^m - 1$.
+
+
+\question What are the best attacks for an $m$-stage linear feedback shift register?
+
+\answer If you have $2m$ plaintext-ciphertext pairs, you can easily compute the first $2m$ keystream 
+  bits by adding each plaintext-ciphertext pair (i.e. $l_i \equiv x_i + y_i \pmod{2}$).\\
+
+  From there, solve $m$ linear equations for $c_0, c_1, \cdots c_{m-1}$.
+  \begin{align*}
+    l_{m + 1} =& c_0 l_1 + c_1 l_2 + \cdots + c_{m - 1} l_m \\
+    l_{m + 2} =& c_0 l_2 + c_2 l_3 + \cdots + c_{m - 1} l_{m + 1}\\
+              &\vdots\\
+    l_{2m}    =& c_0 l_m + c_2 l_{m + 1} + \cdots + c_{m - 1} l_{2m - 1}
+  \end{align*}
+
+  And then we will have obtained the seed (i.e. the key) to the cipher.
+
+
+\question Name and label each component of Enigma.
+
+\answer
+  \begin{itemize}
+    \item The keyboard
+    \item The plugboard $S$
+    \item The rotors $L, M, N$
+    \item The reversing drum $R$
+    \item The glowlamps
+  \end{itemize}
+
+
+\question What does the plugboard do in Enigma?
+
+\answer Allows up to $6$ pairs of letters to be swapped as configured by the user. 
+
+
+\question What do the three rotors do in Enigma? How do they work?
+
+\answer
+  \begin{itemize}
+    \item Each rotor arbitrarily permutes the letters coming in. Not swapping, you can't simply run a letter through the rotors twice to get back the same thing.
+    \item Each rotor has its permutation hardwired. 
+    \item The first rotor spins after every key press.
+    \item The second rotor spins every time the first rotor has made a full revolution (i.e. every $26$ key presses).
+    \item The third rotor spins every time the second rotor has made a full revolution (i.e. every $26 \times 26$ key presses).
+  \end{itemize}
+
+
+\question What doe reversing drum do in Enigma?
+
+\answer Arranges the $26$ letters into $16$ pairs and swaps each pair of letters so that the input is never equal to the output. 
+  This swapping permutation is hardwired into the drum.
+
+
+\question Describe the path of a signal from its initial position on the keyboard through to its final position on the glowlamps.
+
+\answer
+  \begin{enumerate}
+    \item Signal runs through the switch board to potentially get swapped to a signal representing a different letter.
+    \item Signal runs through each rotor, being arbitrarily permuted as it does.
+    \item Signal runs through the reversing drum, being swapped with a different letter (not itself).
+    \item Signal runs back through each rotor again in reverse, being arbitrarily permuted again as it does.
+    \item Signal runs back through the plugboard to potentially swap whichever letter comes in with a different letter. 
+  \end{enumerate}
+
 \end{document}
