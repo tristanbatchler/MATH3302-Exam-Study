@@ -632,4 +632,148 @@ $$
     \item Signal runs back through the plugboard to potentially swap whichever letter comes in with a different letter. 
   \end{enumerate}
 
+
+\question What are two properties that a good pseudo-random number generator have? Explain what is meant by each.
+
+\answer Should be:
+  \begin{itemize}
+    \item {\bf Unpredictable:} If we have so far generated $x_1, x_2, \cdots x_k$, there is no polynomial-time 
+      algorithm that can predict $x_{k + 1}$ with probability greater than $1 / 2$.
+    \item {\bf Deterministic/reproducable:} The same stream of numbers can be generated with the same small starting seed.
+  \end{itemize}
+
+
+\question What is the Avalanche Effect of good cipher design?
+
+\answer Small parts of the input affect large parts of the output.
+
+
+\question What is the Completeness Effect of good cipher design?
+
+\answer Small parts of the output depend on large parts of the input.
+
+
+\question What is the plaintext and ciphertext space of AES-128?
+
+\answer Both are $128$-bit blocks.
+
+
+\question Is a AES-128 a public or private system? What is/are the key(s)?
+
+\answer Private. The key consists of a master key which is used to deterministically generate a sequence of ``round'' keys i.e. subkeys.
+
+
+\question How do you encrypt a plaintext message with AES-128 with $r$ rounds (high level steps only)?
+
+\answer 
+  \begin{enumerate}
+    \item Add round key $K_0$ to the message
+    \item Pack the result into a $4 \times 4$ array of bytes one column at a time so that the first $4$ bytes of  
+      make up the first column of the array read top to bottom.
+    \item For each round except the last, $i = 1, 2, \cdots, r - 1$:
+      \begin{enumerate}
+        \item Substitute bytes
+        \item Shift rows
+        \item Mix columns
+        \item Add round key $K_i$
+      \end{enumerate}
+    \item For the final round, $r$:
+      \begin{enumerate}
+        \item Substitude bytes
+        \item Shift rows
+        \item Add round key $K_r$
+      \end{enumerate}
+  \end{enumerate}
+
+
+\question In AES-128, explain the ``shift rows'' stage.
+
+\answer The first row of the $4 \times 4$ array stays fixed. The second row is cycled $1$ step to the left. The third row is 
+  cycled $2$ steps to the left. The fourth row is cyclced $3$ steps to the left.
+
+
+\question In AES-128, briefly explain the ``substitute bytes'' stage.
+
+\answer Replace each byte of the array using a large S-box.
+
+
+\question In AES-128, briefly explain the ``mix columns'' stage.
+
+\answer Left multiply each column of the array by a fixed matrix of polynomials in $GF(2^8)$. You will need to convert the 
+  bytes in the column to polynomials, do the multiplication, and then convert back to bytes.
+
+
+\question How do you decrypt a ciphertext message with AES-128?
+
+\answer It is largely the same as encryption, except for a few minor tweaks:
+  \begin{itemize}
+    \item Use the inverse S-box for ``substitute bytes''
+    \item Use the inverse matrix for ``mix columns''
+    \item Cycle to the right instead of to the left for ``shift rows''
+    \item The subkeys are used in the reverse order and need to be transformed by the inverse ``mix columns'' matrix.
+  \end{itemize}
+
+
+\question What does a Feistel cipher take as input and output?
+
+\answer Both are blocks of even length.
+
+
+\question How does a single round of a Feistel cipher work?
+
+\answer 
+  \begin{enumerate}
+    \item A block of even length goes in with the round key. 
+    \item The right half of the block is encrypted with the round key and added to the left half of the block.
+    \item The right half of the block becomes the left half of the input to the next round.
+    \item The left half of the block becomes the right half of the input to the next round.
+  \end{enumerate}
+
+
+\question What is the only difference in a Feistel cipher between encryption and ecryption?
+
+\answer Feed the subkeys in the reverse order for each round.
+
+
+\question What is the most important aspect of a Feistel cipher in terms of security?
+
+\answer The half-block encryption function must be highly non-linear.
+
+
+\question What is the bias of a random binary variable $X$?
+
+\answer If the probability that $X$ is $0$ is $\frac{1}{2} + \epsilon$ and the probability that $x$ is $1$ is $\frac{1}{2} - \epsilon$ then 
+  the bias is $\epsilon$.
+
+
+\question What is the Piling Up Lemma?
+
+\answer If $X_1, X_2, \cdots, X_n$ are random binary variables with biases $\epsilon_1, \epsilon_2, \cdots, \epsilon_n$, then 
+  $X_1 + X_2 + \cdots + X_n$ has bias $2^{n - 1} \prod_{i = 1}^n \epsilon_i$.
+
+
+\question How do you calculate the bias of a linear relationship of the form $X_i + Y_j$ within an S-box?
+
+\answer Draw up a table of all the possible $X$-values in the left columns and their corresponding $Y$-values in the next columns.
+  Calculate their sum in the proceeding columns and find the percentage all the rows where that sum is $0$. This is the bias for that 
+  linear relationship.
+
+
+\question What properties would a linear relationship within an S-box have to be considered ``useful''?
+
+\answer The bias should be far from $0$ and/or it should use few input/output bits.
+
+
+\question Question about linear cryptanalysis.
+
+\answer \dots
+
+
+\question Question about differential cryptanalysis.
+
+\answer \dots
+
+
+
+
 \end{document}
