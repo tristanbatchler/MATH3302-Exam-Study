@@ -6,6 +6,9 @@
 \newcommand{\question}{\vspace{5mm}\addtocounter{qcounter}{1}\vspace{5mm}{\bf Q\showqcounter: }}
 \newcommand{\answer}{\vspace{5mm}{\bf A\showqcounter: }}
 
+\newcommand{\probgiven}[2]{\mathbb{P}\left( #1 \,\, \vert \,\, #2 \right)}
+\newcommand{\prob}[1]{\mathbb{P}\left( #1 \right)}
+
 \setlength\parindent{0pt}
 
 \begin{document}
@@ -448,7 +451,7 @@ $$
     \item Alice wants to encrypt a message and send it to Bob.
     \item Eve can listen to Alice's requests to the public key directory and inject her own communicatios to Alice and Bob.
     \item Alice requests Bob's public key from the directory.
-    \item Eve silently sends Alice {\emph her} public key instead of Bob's.
+    \item Eve silently sends Alice {\bf her} public key instead of Bob's.
     \item Alice encrypts her message with Eve's public key instead of Bob's and sends it through Eve with intent of arriving to Bob.
     \item Eve decrypts the message with her private key and reads it.
     \item Eve then re-encrypts the message with Bob's public key and sends it to Bob.
@@ -774,6 +777,107 @@ $$
 \answer \dots
 
 
+\question Using words, what is the probability of $x$ given $y$? How is it denoted?
+
+\answer The probability that $x$ happens already given that $y$ has happened. $\probgiven{x}{y}$.
+
+
+\question What is a useful formula for calculating the probability of $x$ given $y$?
+
+\answer 
+  $$
+    \probgiven{x}{y} = \frac{\prob{x \text{ and } y}}{\prob{y}}
+  $$
+
+
+\question Give two equivalent statements to ``$x$ and $y$ are probabilistically independent''.
+
+\answer 
+  \begin{itemize}
+    \item $\probgiven{x}{y} = \prob{x}$
+    \item $\prob{x \text{ and } y} = \prob{x} \cdot \prob{y}$
+  \end{itemize}
+
+
+\question What is Bayes' Theorem?
+
+\answer 
+  $$
+    \probgiven{y}{x} = \frac{\probgiven{x}{y} \cdot \prob{y}}{\prob{x}}
+  $$
+
+
+\question How do you compute the probability of a ciphertext $y$ occurring in a particular cipherspace $\mathcal{C}$?
+
+\answer For all keys $K$ which can be used to obtain $y$, calculate the probability of $K$ being chosen multiplied by the probability 
+  of the plaintext which encrypts to $y$ under $K$ being chosen. Sum these calculations together. In other words:
+  $$
+    \prob{y} = \sum_{\left\{ K \,\, \vert \,\, y \in C(K)\right\}} \prob{K} \cdot \prob{d_K(y)}
+  $$
+
+
+\question How do you compute the probability of a ciphertext $y$ occurring given a particular plaintext $x$ has occurred? In other 
+  words, give an expression for $\probgiven{y}{x}$.
+
+\answer The sum of the probabilities of the ocucrrence of a key which encrypts $x$ to $y$.
+  $$
+    \probgiven{y}{x} = \sum_{ \left\{ K \,\, \vert \,\, e_K(x) = y \right\} } \prob{K}
+  $$
+
+
+\question Using Bayes' Theorem, how do you compute the probability of a plaintext $x$ occurring given a particular ciphertext $y$ 
+  has occurred? In other words, give an expression for $\probgiven{x}{y}$.
+
+\answer Calculate the probability of $y$ occurring given $x$ has occurred. Then calculate the probability of $x$ and $y$ occurring independently.
+  Then apply Bayes' Theorem, i.e.
+  $$
+    \probgiven{x}{y} = \frac{\probgiven{y}{x} \cdot \prob{x}}{\prob{y}}
+  $$
+
+
+\question What is the easiest way to remember which order the individual probabilities on the top and bottom go in Bayes' Theorem?
+
+\answer Consider the case where $x$ and $y$ are independent so that $\probgiven{x}{y} = \prob{x}$ and $\probgiven{y}{x} = \prob{y}$. Plug 
+  this into the equation and see if it holds true.
+
+
+\question What does a cipher designer want so their cipher achieves perface secrecy?
+
+\answer The plaintext and ciphertext are independent. In other words, for all plaintexts $x$ and ciphertexts $y$:
+  $$
+    \probgiven{x}{y} = \prob{x}
+  $$
+
+  Again, in other words, the ciphertext $y$ gives {\bf no knowledge} of the plaintext.
+
+
+\question If every ciphertext in a cipher can be obtained from {\bf some} plaintext-key pair (i.e. the cipherspace contains no unnecessary 
+  elements), then what does perfect secrecy require?
+
+\answer The keyspace is at least as big as the ciphertext space which is at least as big as the plaintext space. In other words:
+  $$
+    \vert \mathcal{K} \vert \geq \vert \mathcal{C} \vert \geq \vert \mathcal{P} \vert
+  $$
+
+
+\question
+
+\answer
+
+
+\question
+
+\answer
+
+
+\question
+
+\answer
+
+
+\question
+
+\answer
 
 
 \end{document}
