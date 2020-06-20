@@ -860,14 +860,47 @@ $$
   $$
 
 
-\question
+\question State Shannon's Theorem.
 
-\answer
+\answer If the keyspace, ciphertext space, and plaintext are all the same size, the cipher obtains perfect secrecy if and only if:
+  \begin{itemize}
+    \item each key is chosen with equal probability; and
+    \item for each plaintext $x$ and ciphertext $y$ there is a unique key which encrypts $x$ to $y$.
+  \end{itemize}
 
 
-\question
+\question What is the plaintext and ciphertext space of Vernam's one-time pad?
 
-\answer
+\answer Both are strings of bits.
+
+
+\question Is Vernam's one-time pad a public or private system? What is/are the key(s)?
+
+\answer Private. Key is a string of random bits the same length as the plaintext / ciphertext.
+
+
+\question How do you encrypt a plaintext message with Vernam's one-time pad?
+
+\answer Add the private key to the message modulo $2$
+
+
+\question How do you decrypt a ciphertext message encrypted with Vernam's one-time pad?
+
+\answer It's the same as encryption, i.e. add the private key to the message modulo $2$.
+
+
+\question What are the best attacks for Vernam's one-time pad?
+
+\answer There are none really. It achieves perfect secrecy.
+
+
+\question What are some disadvantages of using Vernam's one-time pad?
+
+\answer 
+  \begin{itemize}
+    \item The key is as long as the message itself so sharing the key is just as difficult as sharing the message itself.
+    \item Generating random bits is hard. You would have to toss a coin for every bit of the message you want to send if you want to do it properly.
+  \end{itemize}
 
 
 \question
